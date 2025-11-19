@@ -1,0 +1,14 @@
+name: Try3
+
+on:
+  pull_request_target:
+    types:
+      - closed
+
+jobs:
+  run_tests_on_bump:
+    if: ${{ github.event.pull_request.merged == true && github.event.label.name == 'bump' }}
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo This PR was merged with label 'bump'
