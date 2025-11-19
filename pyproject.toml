@@ -17,6 +17,7 @@ platforms = ["linux-64"]
 test_release_workflow = { path = ".", editable = true }
 
 [tool.pixi.tasks]
+current-version = "bumpver show -n | awk -F': ' '/Current Version: / {print $2}'"
 
 [tool.pixi.dependencies]
 bumpver = ">=2025.1131,<2026"

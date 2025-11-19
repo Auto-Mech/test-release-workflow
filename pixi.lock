@@ -466,7 +466,7 @@ packages:
 - pypi: ./
   name: test-release-workflow
   version: 0.2025.0
-  sha256: 37968803b8fe92f7a630cca2b8804ed40ea1704c22956cf955b3ab058dbe17c7
+  sha256: 890723dc5fccc62c75eab72482951e6c37aee1ec76fdd745010945e82ca77a1b
   requires_python: '>=3.11'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_ha0e22de_103.conda
