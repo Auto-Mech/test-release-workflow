@@ -40,15 +40,6 @@ jobs:
         run: |
           pixi run bumpver update --patch
 
-      - name: Get version tag
-        id: version
-        run: echo "value=$(pixi run current-version)" >> $GITHUB_OUTPUT
-
       # Create GitHub Release
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.version.outputs.value }}
-          release_name: "Release ${{ steps.version.outputs.value }}"
+      - name: Release
+        uses: softprops/action-gh-release@v2
