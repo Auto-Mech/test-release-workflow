@@ -1,0 +1,17 @@
+name: On PR Merge with Specific Label
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  run_on_merged_with_label:
+    if: |
+      github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.labels.*.name, 'bump')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Perform action
+        run: echo "Pull request was merged with 'bump' label!"
