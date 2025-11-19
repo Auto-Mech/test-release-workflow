@@ -1,0 +1,17 @@
+name: release
+
+on:
+  pull_request:
+    types:
+      - closed
+
+jobs:
+  release:
+    if: >
+      github.event.pull_request.merged == true &&
+      contains(github.event.pull_request.labels.*.name, 'bump:minor')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Report
+        run: echo "Pull request was merged with 'bump' label!"
