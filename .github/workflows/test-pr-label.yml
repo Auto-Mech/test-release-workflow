@@ -18,3 +18,4 @@ jobs:
     steps:
     - run: |
         echo The PR had the bug label
+        echo More...
