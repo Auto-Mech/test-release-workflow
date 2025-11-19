@@ -1,54 +1,13 @@
 name: release
 
-on:
-  pull_request_target:
-    types:
-      - closed
-
-permissions:
-  contents: write      # needed for pushing tags/commits & creating releases
+on: push
 
 jobs:
   release:
-    # Only run if PR was merged AND has the bump label
-    if: >
-      github.event.pull_request.merged == true &&
-      contains(github.event.pull_request.labels.*.name, 'bump:patch')
-
     runs-on: ubuntu-latest
-
     steps:
-      # We check out the BASE branch — this is now the merged code — SAFE
-      - name: Checkout merged code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.base.ref }}
-          fetch-depth: 0
-
-      # Environment
-      - name: Set up Pixi
-        uses: prefix-dev/setup-pixi@v0.8.9
-
-      # Git identity
-      - name: Set Git identity
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
-
-      # Bump version
-      - name: Bump version (patch)
-        run: |
-          pixi run bumpver update --patch
-
-      - name: Get version tag
-        id: version
-        run: echo "value=$(pixi run current-version)" >> $GITHUB_OUTPUT
-
-      # Create GitHub Release
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.version.outputs.value }}
-          release_name: "Release ${{ steps.version.outputs.value }}"
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
