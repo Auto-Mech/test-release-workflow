@@ -12,3 +12,9 @@ jobs:
     steps:
     - run: |
         echo The PR was merged
+  if_bug_label:
+    if: github.event.label.name == 'bug'
+    runs-on: ubuntu-latest
+    steps:
+    - run: |
+        echo The PR had the bug label
