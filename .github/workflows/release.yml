@@ -11,7 +11,7 @@ jobs:
   release:
     if: >
       github.event.pull_request.merged == true &&
-      contains(github.event.pull_request.labels.*.name, 'release:patch')
+      contains(github.event.pull_request.labels.*.name, 'release')
     runs-on: ubuntu-latest
 
     steps:
@@ -37,7 +37,12 @@ jobs:
 
       # 3. Bump version + read version
       - name: Bump version (patch)
+        if: contains(github.event.pull_request.labels.*.name, 'release:patch')
         run: pixi run bumpver update --patch
+
+      - name: Bump version (major)
+        if: contains(github.event.pull_request.labels.*.name, 'release:major')
+        run: pixi run bumpver update --major
 
       - name: Get version
         id: version
