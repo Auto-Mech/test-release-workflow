@@ -2,53 +2,50 @@ name: release
 
 on:
   pull_request_target:
-    types:
-      - closed
+    types: [closed]
 
 permissions:
-  contents: write      # needed for pushing tags/commits & creating releases
+  contents: write
 
 jobs:
   release:
-    # Only run if PR was merged AND has the bump label
     if: >
       github.event.pull_request.merged == true &&
       contains(github.event.pull_request.labels.*.name, 'bump:patch')
-
     runs-on: ubuntu-latest
 
     steps:
-      # We check out the BASE branch — this is now the merged code — SAFE
+      # 1. Check out the base branch to ensure we have the merged code
       - name: Checkout merged code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
 
-      # Environment
+      # 2. Set up Pixi environment
       - name: Set up Pixi
         uses: prefix-dev/setup-pixi@v0.8.9
 
-      # Git identity
+      # 3. Configure Git identity for committing
       - name: Set Git identity
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
-      # Bump version
+      # 4. Bump the version
       - name: Bump version (patch)
         run: |
           pixi run bumpver update --patch
 
+      # 5. Extract version
       - name: Get version tag
         id: version
-        run: echo "value=$(pixi run current-version)" >> $GITHUB_OUTPUT
+        run: |
+          tag=$(pixi run current-version)
+          echo "tag=${tag}" >> $GITHUB_OUTPUT
 
-      # Create GitHub Release
-      - name: Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 6. Create GitHub Release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.version.outputs.value }}
-          release_name: "Release ${{ steps.version.outputs.value }}"
+          tag_name: ${{ steps.version.outputs.tag }}
