@@ -465,8 +465,8 @@ packages:
   timestamp: 1753199211006
 - pypi: ./
   name: test-release-workflow
-  version: 0.2025.3
-  sha256: 364b7ce716d60a6d1d20d94421eebb9e4fe6091c447b1c08d20cfeca21b5f185
+  version: 0.2025.4
+  sha256: 3df81f97adc72e0c1a157e76efebbe7fc89534b664e8c4cc75fe2b8316192ea0
   requires_python: '>=3.11'
   editable: true
 - conda: https://conda.anaconda.org/conda-forge/linux-64/tk-8.6.13-noxft_ha0e22de_103.conda
