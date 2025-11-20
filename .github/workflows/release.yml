@@ -11,40 +11,40 @@ jobs:
   release:
     if: >
       github.event.pull_request.merged == true &&
-      contains(github.event.pull_request.labels.*.name, 'bump:patch')
+      contains(github.event.pull_request.labels.*.name, 'release:patch')
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Check out the base branch to ensure we have the merged code
+      # 1. Checkout the merged code
       - name: Checkout merged code
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.pull_request.base.ref }}
           fetch-depth: 0
 
-      # 2. Set up Pixi environment
-      - name: Set up Pixi
+      # 2. Setup environment
+      - name: Install Pixi
         uses: prefix-dev/setup-pixi@v0.8.9
 
-      # 3. Configure Git identity for committing
-      - name: Set Git identity
-        run: |
-          git config user.name 'github-actions[bot]'
-          git config user.email 'github-actions[bot]@users.noreply.github.com'
+      - name: Fetch bot identity
+        id: bot
+        uses: raven-actions/bot-details@v1
 
-      # 4. Bump the version
+      - name: Configure git for committing
+        run: |
+          git config user.name "${{ steps.bot.outputs.name }}"
+          git config user.email "${{ steps.bot.outputs.email }}"
+
+      # 3. Bump version + read version
       - name: Bump version (patch)
-        run: |
-          pixi run bumpver update --patch
+        run: pixi run bumpver update --patch
 
-      # 5. Extract version
-      - name: Get version tag
+      - name: Get version
         id: version
         run: |
-          tag=$(pixi run current-version)
-          echo "tag=${tag}" >> $GITHUB_OUTPUT
+          echo "tag=$(pixi run current-version)" >> "$GITHUB_OUTPUT"
 
-      # 6. Create GitHub Release
+      # 4. Create release
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
